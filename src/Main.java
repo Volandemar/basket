@@ -1,32 +1,40 @@
-import com.sun.source.tree.WhileLoopTree;
-
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        File basketFile = new File("basket.txt");
+        Basket basket = null;
+        File basketFile = new File("src/basket.txt");
+        Scanner scanner = new Scanner(System.in);
         try {
-            if (basketFile.createNewFile()){
-                System.out.println("Корзина пуста!");
+            if (basketFile.createNewFile()) {
+                String[] productsList = {"Хлеб", "Молоко", "Яблоко", "Дыня", "Кефир"};
+                int[] productsPrices = {50, 65, 40, 100, 50};
+                basket = new Basket(productsList, productsPrices);
+            } else {
+                basket = Basket.loadFromTxtFile(basketFile);
             }
-            else{
-                InputStreamReader in = new InputStreamReader(new FileInputStream(basketFile), StandardCharsets.UTF_8);
-                while (in.ready()){
-                    System.out.println((char) in.read());
-                }
-                in.close();
-            }
-
-        }catch (IOException e){
+        } catch (IOException e) {
             System.out.println(e.getMessage());
         }
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Введите название продукта и его сумму");
-        OutputStreamWriter out = new OutputStreamWriter(new FileOutputStream(basketFile));
-        String enterUser = scanner.nextLine();
-        out.write(enterUser);
-        out.close();
+        basket.printCart();
+        while (true) {
+            System.out.println("Выберите и введине номер товара, а затем необходимое количество.\n End - завершение работы программы");
+            String enterUser = scanner.nextLine();
+            if ("end".equals(enterUser)) {
+                break;
+            }
+            try {
+                String[] selectUser = enterUser.split(" ");
+                int numberProduct = (Integer.parseInt(selectUser[0]) - 1);
+                int countProduct = Integer.parseInt(selectUser[1]);
+                basket.addToCart(numberProduct, countProduct);
+                basket.saveTxt(basketFile);
+                basket.printCart();
+            } catch (IOException e) {
+                e.getMessage();
+            }
+        }
     }
 }
+
