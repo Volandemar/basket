@@ -1,8 +1,9 @@
 import java.io.*;
 import java.util.Arrays;
 import java.util.Scanner;
+import java.util.prefs.BackingStoreException;
 
-public class Basket {
+public class Basket implements Serializable{
 
     private String[] nameProduct;
     private int[] priceProduct;
@@ -32,38 +33,17 @@ public class Basket {
             }
         }
     }
-
-    public void saveTxt(File textFile) throws IOException{
-        FileWriter write = new FileWriter(textFile);
+    public void  saveBin (File binFile) throws IOException{
+        ObjectOutputStream save = new ObjectOutputStream(new FileOutputStream(binFile));
         for (String name : nameProduct) {
-            write.write(name + " ");
+            save.writeObject(this);
         }
-        write.write("\n");
-        for (int price : priceProduct) {
-            write.write(price + " ");
-        }
-        write.write("\n");
-        for (int count : countProduct) {
-            write.write(count + " ");
-        }
-        write.flush();
-        write.close();
     }
 
-    static Basket loadFromTxtFile(File textFile) throws IOException {
-        FileReader reader = new FileReader(textFile);
-        Scanner scanner = new Scanner(reader);
-        String[] nameProduct = scanner.nextLine().split(" ");
-        int[] priceProduct = Arrays.stream(
-                        scanner.nextLine().split(" "))
-                .mapToInt(value -> Integer.parseInt(value))
-                .toArray();
-        int[] count = Arrays.stream(
-                        scanner.nextLine().split(" "))
-                .mapToInt(value -> Integer.parseInt(value))
-                .toArray();
-
-        return new Basket(nameProduct, priceProduct, count);
-    }
+    static Basket loadFromBinFile(File binFile) throws IOException, ClassNotFoundException{
+        ObjectInputStream load = new ObjectInputStream(new FileInputStream(binFile));
+        Basket basket = (Basket) load.readObject();
+        return basket;
+        }
 }
 
