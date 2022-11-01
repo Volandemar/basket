@@ -33,37 +33,38 @@ public class Basket {
         }
     }
 
-    public void saveTxt(File textFile) throws IOException{
-        FileWriter write = new FileWriter(textFile);
-        for (String name : nameProduct) {
-            write.write(name + " ");
+    public void saveTxt(File textFile) throws IOException {
+        try (FileWriter write = new FileWriter(textFile)) {
+            for (String name : nameProduct) {
+                write.write(name + " ");
+            }
+            write.write("\n");
+            for (int price : priceProduct) {
+                write.write(price + " ");
+            }
+            write.write("\n");
+            for (int count : countProduct) {
+                write.write(count + " ");
+            }
+            write.flush();
         }
-        write.write("\n");
-        for (int price : priceProduct) {
-            write.write(price + " ");
-        }
-        write.write("\n");
-        for (int count : countProduct) {
-            write.write(count + " ");
-        }
-        write.flush();
-        write.close();
     }
 
     static Basket loadFromTxtFile(File textFile) throws IOException {
-        FileReader reader = new FileReader(textFile);
-        Scanner scanner = new Scanner(reader);
-        String[] nameProduct = scanner.nextLine().split(" ");
-        int[] priceProduct = Arrays.stream(
-                        scanner.nextLine().split(" "))
-                .mapToInt(value -> Integer.parseInt(value))
-                .toArray();
-        int[] count = Arrays.stream(
-                        scanner.nextLine().split(" "))
-                .mapToInt(value -> Integer.parseInt(value))
-                .toArray();
+        try (FileReader reader = new FileReader(textFile);
+             Scanner scanner = new Scanner(reader)) {
+            String[] nameProduct = scanner.nextLine().split(" ");
+            int[] priceProduct = Arrays.stream(
+                            scanner.nextLine().split(" "))
+                    .mapToInt(value -> Integer.parseInt(value))
+                    .toArray();
+            int[] count = Arrays.stream(
+                            scanner.nextLine().split(" "))
+                    .mapToInt(value -> Integer.parseInt(value))
+                    .toArray();
 
-        return new Basket(nameProduct, priceProduct, count);
+            return new Basket(nameProduct, priceProduct, count);
+        }
     }
 }
 
