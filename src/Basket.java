@@ -3,7 +3,7 @@ import java.util.Arrays;
 import java.util.Scanner;
 import java.util.prefs.BackingStoreException;
 
-public class Basket implements Serializable{
+public class Basket implements Serializable {
 
     private String[] nameProduct;
     private int[] priceProduct;
@@ -33,17 +33,20 @@ public class Basket implements Serializable{
             }
         }
     }
-    public void  saveBin (File binFile) throws IOException{
-        ObjectOutputStream save = new ObjectOutputStream(new FileOutputStream(binFile));
-        for (String name : nameProduct) {
-            save.writeObject(this);
+
+    public void saveBin(File binFile) throws IOException {
+        try (ObjectOutputStream save = new ObjectOutputStream(new FileOutputStream(binFile))) {
+            for (String name : nameProduct) {
+                save.writeObject(this);
+            }
         }
     }
 
-    static Basket loadFromBinFile(File binFile) throws IOException, ClassNotFoundException{
-        ObjectInputStream load = new ObjectInputStream(new FileInputStream(binFile));
-        Basket basket = (Basket) load.readObject();
-        return basket;
+    static Basket loadFromBinFile(File binFile) throws IOException, ClassNotFoundException {
+        try (ObjectInputStream load = new ObjectInputStream(new FileInputStream(binFile))) {
+            Basket basket = (Basket) load.readObject();
+            return basket;
         }
+    }
 }
 
