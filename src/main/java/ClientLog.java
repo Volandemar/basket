@@ -9,11 +9,6 @@ public class ClientLog {
     private List<String[]> listLog = new ArrayList<>();
 
 
-    //    public void log(String[] value, File nameLog) throws IOException {
-//        try (CSVWriter writer = new CSVWriter(new FileWriter(nameLog, true))) {
-//            writer.writeNext(value);
-//        }
-//    }
     public void log(int productNumber, int amount) {
         String[] userLog = {String.valueOf(productNumber), String.valueOf(amount)};
         listLog.add(userLog);
